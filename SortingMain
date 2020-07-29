@@ -1,0 +1,236 @@
+package sortingAlgorithm;
+
+import java.io.*;  
+import java.util.*;
+
+public class SortingMain 
+{
+	public static void main(String[] args) throws IOException 
+	{	
+		// initialize array and variables
+		int[] values = {537,44,788,524,753,108,607,211,323,130,647,772,241,627,686,918,939,343,97,930,403,796,138,486,982,993,941,928,1,937,57,599,675,539,223,392,327,816,481,50,586,50,898,77,49,696,918,346,899,390,815,624,86,363,803,259,987,939,90,231,899,547,615,592,332,886,195,121,844,420,594,621,39,415,353,908,484,95,268,977,474,310,74,229,1000,302,259,930,803,801,897,249,101,659,61,339,431,694,694,918};
+		int[] testVals ={44, 130, 686, 390, 621, 918, 897, 2, 33, 54, 999};
+		List<Integer> newArray = new ArrayList<Integer>();
+		int count;
+		boolean check;
+		
+		// print values array
+		System.out.print("Original random array:\n");
+		for (int j = 0; j < 100; j++)
+		{
+			if(j % 10 == 0)
+				System.out.println();
+			System.out.print(values[j] + "\t");
+		}
+		
+		// linear search on unsorted list
+		System.out.println("\n");
+		System.out.println("LINEAR SEARCH ON UNSORTED:");
+		System.out.println("Number \t   Found / Not Found \t # of Comparisons");
+		for (int i = 0; i < 11; i++)
+		{
+			System.out.print(testVals[i] + "\t\t");
+			count = 0;
+			check = false;
+			while (count < 100 && check == false)
+			{
+				if (testVals[i] == values[count])
+					check = true;
+				count++;
+			}
+			if (check == true)
+				System.out.print("Found\t\t\t");
+			else
+				System.out.print("Not Found\t\t");
+			System.out.println(count);
+		}
+		
+		System.out.println("\nSorted array:");
+		
+		// loop to reheap to make max heap & add max root to new array
+		int temp;
+		for (int i = 99; i >= 0; i--)
+		{
+			createHeap(values, i);
+			temp = values[0];
+			newArray.add(0, values[0]);
+			values[0] = values [i];
+		}
+		
+		// print out new array
+		for (int j = 0; j < 100; j++)
+		{
+			if(j % 10 == 0)
+				System.out.println();
+			System.out.print(newArray.get(j) + "\t");
+		}
+		
+		// linear search on sorted list
+		System.out.println("\n");
+		System.out.println("LINEAR SEARCH ON SORTED:");
+		System.out.println("Number \t   Found / Not Found \t # of Comparisons");
+		for (int i = 0; i < 11; i++)
+		{
+			System.out.print(testVals[i] + "\t\t");
+			count = 0;
+			check = false;
+			while (newArray.get(count) <= testVals[i] && check == false)
+			{
+				if (testVals[i] == newArray.get(count))
+					check = true;
+				count++;
+			}
+			if (check == true)
+			{
+				System.out.print("Found\t\t\t");
+				System.out.println(count);
+			}
+			else
+			{
+				System.out.print("Not Found\t\t");
+				System.out.println(count + 1);
+			}
+		}
+		
+		// binary search
+		System.out.println("\nBINARY SEARCH: ");
+		System.out.println("Number \t   Found / Not Found \t # of Comparisons");
+		for (int i = 0; i < 11; i++)
+		{
+			System.out.print(testVals[i] + "\t\t");
+			int first = 0;
+			int last = newArray.size() - 1;
+			int mid;
+			int numComp = 0;
+			check = false;
+			
+			// if first becomes greater than last, item not found
+			while (first <= last && check == false)
+			{
+				numComp++;
+				mid = (first + last) / 2;
+				
+				if (newArray.get(mid) == testVals[i])
+				{
+					System.out.println("Found\t\t\t" + numComp);
+					check = true;
+				}
+				else if (newArray.get(mid) >= testVals[i])
+					last = mid - 1;
+				else
+					first = mid + 1;
+			}
+			if (check == false)
+			{
+				System.out.println("Not Found\t\t" + numComp);
+			}		
+		}
+	}
+	
+	// i is root, n is size
+	public static void heapify (int array[], int arraySize, int i)
+	{
+		int largest = i;
+		int left = 2 * i + 1;
+		int right = 2 * i + 2;
+		
+		// check if left child is larger than root
+		if (left < arraySize && array[left] > array[largest])
+			largest = left;
+		
+		// check if right child is larger than largest
+		if (right < arraySize && array[right] > array[largest])
+			largest = right;
+		
+		// swap largest child with root
+		if (largest != i)
+		{
+			int swap = array [i];
+			array[i] = array[largest];
+			array[largest] = swap;
+			
+			// heapify the tree
+			heapify(array, arraySize, largest);
+		}
+	}
+	
+	// create max heap
+	public static void createHeap (int array[], int arraySize)
+	{
+		// find last non-leaf node, reheap up
+		int beginningIndex = (arraySize / 2) - 1;
+		for (int i = beginningIndex; i >= 0; i--)
+		{
+			heapify (array, arraySize, i);
+		}
+	}
+}
+/*
+Original random array:
+
+537	44	788	524	753	 108 607 211 323 130	
+647	772	241	627	686	 918 939 343 97	 930	
+403	796	138	486	982	 993 941 928 1	 937	
+57	599	675	539	223	 392 327 816 481 50	
+586	50	898	77	49	 696 918 346 899 390	
+815	624	86	363	803	 259 987 939 90	 231	
+899	547	615	592	332	 886 195 121 844 420	
+594	621	39	415	353	 908 484 95	 268 977	
+474	310	74  229 1000 302 259 930 803 801	
+897	249	101	659	61	 339 431 694 694 918	
+
+LINEAR SEARCH ON UNSORTED:
+Number 	   Found / Not Found 	 # of Comparisons
+44		Found			2
+130		Found			10
+686		Found			15
+390		Found			50
+621		Found			72
+918		Found			16
+897		Found			91
+2		Not Found		100
+33		Not Found		100
+54		Not Found		100
+999		Not Found		100
+
+Sorted array:
+
+1	39	44	49	50	50	57	61	74	77	
+86	90	95	97	101	108	121	130	138	195	
+211	223	229	231	241	249	259	259	268	302	
+310	323	327	332	339	343	346	353	363	390	
+392	403	415	420	431	474	481	484	486	524	
+537	539	547	586	592	594	599	607	615	621	
+624	627	647	659	675	686	694	694	696	753	
+772	788	796	801	803	803	815	816	844	886	
+897	898	899	899	908	918	918	918	928	930	
+930	937	939	939	941	977	982	987	993	1000	
+
+LINEAR SEARCH ON SORTED:
+Number 	   Found / Not Found 	 # of Comparisons
+44		Found			3
+130		Found			18
+686		Found			66
+390		Found			40
+621		Found			60
+918		Found			86
+897		Found			81
+2		Not Found		2
+33		Not Found		2
+54		Not Found		7
+999		Not Found		100
+
+BINARY SEARCH: 
+Number 	   Found / Not Found 	 # of Comparisons
+44		Found			5
+130		Found			4
+686		Found			6
+390		Found			5
+621		Found			6
+918		Found			3
+897		Found			4
+2		Not Found		7
+33		Not Found		7
+54		Not Found		6
+999		Not Found		7
+*/
